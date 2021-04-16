@@ -12,7 +12,7 @@
 ### Download source code
 
 ```bash
-git clone --recursive https://github.com/securesystemslab/agamotto.git
+git clone --depth 1 --recursive https://github.com/securesystemslab/agamotto.git
 cd agamotto
 export AGPATH=$PWD # assumed by commands that follow
 ./setup.sh
@@ -22,6 +22,24 @@ export AGPATH=$PWD # assumed by commands that follow
 ### Change the host Linux kernel for custom hypercall support
 
 Build the host Linux kernel with [our patch](host/linux/kernel.patch) applied, and with `CONFIG_KVM_AGAMOTTO=y`, and install & reboot it.
+```
+# Necessary package to build kernel
+sudo apt-get install git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison
+git clone --depth 1 --branch Ubuntu-hwe-4.18.0-18.19_18.04.1 git://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/bionic
+cd bionic/arch
+git apply $AGPATH/host/linux/kernel.patch
+cd ..
+cp /boot/config-5.8.0-38-generic .config
+echo "CONFIG_KVM_AGAMOTTO=y" |tee -a .config
+# Switch to gcc-8, there is issue with gcc-9 compile
+sudo update-alternatives --install /usr/bin/gcc gcc  /usr/bin/gcc-8 1
+make oldconfig
+cp debian/scripts/retpoline-extract-one scripts/ubuntu-retpoline-extract-one
+make -j8
+sudo make modules_install
+sudo make install
+sudo reboot
+```
 
 #### Tested environment:
 - [Ubuntu-hwe-4.18.0-18.19_18.04.1](https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/bionic) on AMD EPYC 7601
