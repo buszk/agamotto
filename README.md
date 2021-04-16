@@ -25,16 +25,17 @@ Build the host Linux kernel with [our patch](host/linux/kernel.patch) applied, a
 ```
 # Necessary package to build kernel
 sudo apt-get install git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison
-git clone --depth 1 --branch Ubuntu-hwe-4.18.0-18.19_18.04.1 git://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/bionic
-cd bionic/arch
-git apply $AGPATH/host/linux/kernel.patch
-cd ..
-cp /boot/config-5.8.0-38-generic .config
-echo "CONFIG_KVM_AGAMOTTO=y" |tee -a .config
 # Switch to gcc-8, there is issue with gcc-9 compile
 sudo update-alternatives --install /usr/bin/gcc gcc  /usr/bin/gcc-8 1
-make oldconfig
+git clone --depth 1 --branch Ubuntu-hwe-4.18.0-18.19_18.04.1 git://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/bionic
+cd bionic/
 cp debian/scripts/retpoline-extract-one scripts/ubuntu-retpoline-extract-one
+patch -p0 <$AGPATH/host/linux/kernel.patch
+# Configure with current setting
+cp /boot/config-5.8.0-38-generic .config
+echo "CONFIG_KVM_AGAMOTTO=y" |tee -a .config
+make oldconfig
+# Build and install
 make -j8
 sudo make modules_install
 sudo make install
