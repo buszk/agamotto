@@ -9,6 +9,11 @@
 
 ## Setup
 
+### Dependencies
+```
+sudo apt install -y debootstrap libglib2.0-dev libpixman-1-dev
+```
+
 ### Download source code
 
 ```bash
@@ -49,6 +54,16 @@ sudo reboot
 ### Download and build Syzkaller
 
 ```bash
+# Install go
+wget https://dl.google.com/go/go1.14.2.linux-amd64.tar.gz
+tar -xf go1.14.2.linux-amd64.tar.gz
+mv go goroot
+mkdir gopath
+export GOPATH=`pwd`/gopath
+export GOROOT=`pwd`/goroot
+export PATH=$GOPATH/bin:$PATH
+export PATH=$GOROOT/bin:$PATH
+
 # Get Syzkaller source code
 go get -u -d github.com/google/syzkaller
 cd $GOPATH/src/github.com/google/syzkaller
