@@ -98,6 +98,7 @@ mkdir $AGPATH/build/qemu
 cd $AGPATH/build/qemu
 $AGPATH/qemu/configure --prefix=$AGPATH/build/qemu/install --target-list=x86_64-softmmu --with-agamotto=$AGPATH/build/libagamotto --enable-debug
 make -j4 install
+export PATH=$PATH:$AGPATH/build/qemu/install/bin/
 ```
 
 
