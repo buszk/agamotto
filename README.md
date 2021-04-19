@@ -11,7 +11,7 @@
 
 ### Dependencies
 ```
-sudo apt install -y debootstrap libglib2.0-dev libpixman-1-dev
+sudo apt install -y debootstrap libglib2.0-dev libpixman-1-dev cmake
 ```
 
 ### Download source code
@@ -38,6 +38,7 @@ cp debian/scripts/retpoline-extract-one scripts/ubuntu-retpoline-extract-one
 patch -p0 <$AGPATH/host/linux/kernel.patch
 # Configure with current setting
 cp /boot/config-5.8.0-38-generic .config
+make localyesconfig
 echo "CONFIG_KVM_AGAMOTTO=y" |tee -a .config
 make oldconfig
 # Build and install
@@ -96,7 +97,7 @@ patch -p0 <$AGPATH/qemu.patch
 # Build
 mkdir $AGPATH/build/qemu
 cd $AGPATH/build/qemu
-$AGPATH/qemu/configure --prefix=$AGPATH/build/qemu/install --target-list=x86_64-softmmu --with-agamotto=$AGPATH/build/libagamotto --enable-debug
+$AGPATH/qemu/configure --prefix=$AGPATH/build/qemu/install --target-list=x86_64-softmmu --with-agamotto=$AGPATH/build/libagamotto --enable-debug --disable-werror
 make -j4 install
 export PATH=$PATH:$AGPATH/build/qemu/install/bin/
 ```
