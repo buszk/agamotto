@@ -284,11 +284,11 @@ QEMU_CMD=""
 QEMU_CMD+=" -smp 1"
 QEMU_CMD+=" -net none"
 
-if [ ! -z $IOMMU ]; then
-	QEMU_CMD+=" -machine q35,accel=kvm"
-else
-	QEMU_CMD+=" -cpu host"
-fi
+# if [ ! -z $IOMMU ]; then
+# 	QEMU_CMD+=" -machine q35,accel=kvm"
+# else
+# 	QEMU_CMD+=" -cpu host"
+# fi
 QEMU_CMD+=" -nodefaults"
 
 if [ ! -z $WINDOWS ]; then
@@ -340,17 +340,17 @@ fi
 
 DEVICE_NAME="periscope" # our exploratory device
 
-if [ ! -z $DEVICE_ID && [ "$DEVICE_ID" != "0x"* ] ]; then
-	DEVICE_FOUND=$($QEMU -device ? | grep name | awk -F", " "{print \$1}" | awk "{print \$2}" | grep \"$DEVICE_ID\")
-	if [ ! -z $DEVICE_FOUND ]; then
-		LIBAGAMOTTO=
-		DEVICE_NAME=$DEVICE_ID # existing emulated device
-	else
-		echo No emulated device \"$DEVICE_ID\" found.
-		echo
-		exit 1
-	fi
-fi
+#if [ ! -z "$DEVICE_ID" ] && [ "$DEVICE_ID" != "0x"* ] ; then
+#	DEVICE_FOUND=$($QEMU -device ? | grep name | awk -F", " "{print \$1}" | awk "{print \$2}" | grep \"$DEVICE_ID\")
+#	if [ ! -z $DEVICE_FOUND ]; then
+#		LIBAGAMOTTO=
+#		DEVICE_NAME=$DEVICE_ID # existing emulated device
+#	else
+#		echo No emulated device \"$DEVICE_ID\" found.
+#		echo
+#		exit 1
+#	fi
+#fi
 
 if [ ! -z $IOMMU ]; then
 	QEMU_CMD+=" -device ioh3420,id=pcie.0,chassis=1"
