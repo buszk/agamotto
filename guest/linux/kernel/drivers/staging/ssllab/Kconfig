@@ -1,0 +1,3 @@
+config SSLLAB
+	tristate "SSLLAB pci driver support"
+	depends on PCI
