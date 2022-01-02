@@ -9,10 +9,15 @@
 
 ## Setup
 
+### Dependencies
+```
+sudo apt install -y debootstrap libglib2.0-dev libpixman-1-dev cmake
+```
+
 ### Download source code
 
 ```bash
-git clone --recursive https://github.com/securesystemslab/agamotto.git
+git clone --depth 1 --recursive https://github.com/securesystemslab/agamotto.git
 cd agamotto
 export AGPATH=$PWD # assumed by commands that follow
 ./setup.sh
@@ -22,6 +27,26 @@ export AGPATH=$PWD # assumed by commands that follow
 ### Change the host Linux kernel for custom hypercall support
 
 Build the host Linux kernel with [our patch](host/linux/kernel.patch) applied, and with `CONFIG_KVM_AGAMOTTO=y`, and install & reboot it.
+```
+# Necessary package to build kernel
+sudo apt-get install git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison
+# Switch to gcc-8, there is issue with gcc-9 compile
+sudo update-alternatives --install /usr/bin/gcc gcc  /usr/bin/gcc-8 1
+git clone --depth 1 --branch Ubuntu-hwe-4.18.0-18.19_18.04.1 git://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/bionic
+cd bionic/
+cp debian/scripts/retpoline-extract-one scripts/ubuntu-retpoline-extract-one
+patch -p0 <$AGPATH/host/linux/kernel.patch
+# Configure with current setting
+cp /boot/config-5.8.0-38-generic .config
+make localyesconfig
+echo "CONFIG_KVM_AGAMOTTO=y" |tee -a .config
+make oldconfig
+# Build and install
+make -j8
+sudo make modules_install
+sudo make install
+sudo reboot
+```
 
 #### Tested environment:
 - [Ubuntu-hwe-4.18.0-18.19_18.04.1](https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/bionic) on AMD EPYC 7601
@@ -30,6 +55,16 @@ Build the host Linux kernel with [our patch](host/linux/kernel.patch) applied, a
 ### Download and build Syzkaller
 
 ```bash
+# Install go
+wget https://dl.google.com/go/go1.14.2.linux-amd64.tar.gz
+tar -xf go1.14.2.linux-amd64.tar.gz
+mv go goroot
+mkdir gopath
+export GOPATH=`pwd`/gopath
+export GOROOT=`pwd`/goroot
+export PATH=$GOPATH/bin:$PATH
+export PATH=$GOROOT/bin:$PATH
+
 # Get Syzkaller source code
 go get -u -d github.com/google/syzkaller
 cd $GOPATH/src/github.com/google/syzkaller
@@ -62,8 +97,9 @@ patch -p0 <$AGPATH/qemu.patch
 # Build
 mkdir $AGPATH/build/qemu
 cd $AGPATH/build/qemu
-$AGPATH/qemu/configure --prefix=$AGPATH/build/qemu/install --target-list=x86_64-softmmu --with-agamotto=$AGPATH/build/libagamotto --enable-debug
+$AGPATH/qemu/configure --prefix=$AGPATH/build/qemu/install --target-list=x86_64-softmmu --with-agamotto=$AGPATH/build/libagamotto --enable-debug --disable-werror
 make -j4 install
+export PATH=$PATH:$AGPATH/build/qemu/install/bin/
 ```
 
 
