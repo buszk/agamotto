@@ -7,3 +7,6 @@
 /scripts/chroot/
 /scripts/stretch.*
 __pycache__/
+/guest/linux/agents/generated/
+*.log
+/results/

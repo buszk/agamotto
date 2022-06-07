@@ -5,6 +5,7 @@ GUEST_CONFIGS=(
 	"rtl8139"
 	"stmmac"
 	"snic"
+	"drifuzz"
 	"usb"
 )
 

@@ -72,6 +72,48 @@ devices = {
         "image": "snic",
         "module": "drivers/scsi/snic/snic.ko",
     },
+    "ath9k": {
+        "vendor": 0x168c,
+        "device": 0x0023,
+        "revision": 0,
+        "class": ~0,
+        "subsystem_vendor": 0x0,
+        "subsystem": 0x0,
+        "mappings": [
+            {"size": 0x10000000, "type": TYPE_MEMORY},
+        ],
+        "image": "drifuzz",
+        "module": "drivers/net/wireless/ath/ath9k/ath9k.ko",
+
+    },
+    "ath10k_pci": {
+        "vendor": 0x168c,
+        "device": 0x003e,
+        "revision": 0,
+        "class": ~0,
+        "subsystem_vendor": 0x144d,
+        "subsystem": 0xc135,
+        "mappings": [
+            {"size": 0x10000000, "type": TYPE_MEMORY},
+        ],
+        "image": "drifuzz",
+        "module": "drivers/net/wireless/ath/ath10k/ath10k_pci.ko",
+    },
+    "rtwpci": {
+        "vendor": 0x10ec,
+        "device": 0xb822,
+        "subsystem_vendor": 0x10ec,
+        "subsystem_id": 0x7,
+        "class": ~0,
+        "revision": 7,
+        "mappings": [
+            {"size": 0x10000000, "type": TYPE_MEMORY},
+            {"size": 0x10000000, "type": TYPE_MEMORY},
+            {"size": 0x10000000, "type": TYPE_MEMORY},
+        ],
+        "image": "drifuzz",
+        "module": "drivers/net/wireless/realtek/rtw88/rtwpci.ko",
+    },
     "usb": {
         "image": "usb",
         "module": None,
@@ -327,6 +369,9 @@ def run_qemu(kernel_dir, drive_path, dev, prog,
             ["-f", os.path.join(default_result_dir(dev, prog),
                                 serial_output_file)]
         )
+        #qemu_args.extend([
+        #    "-serial", "stdio"
+        #])
     else:
         qemu_args.extend([
             "-serial", "stdio"
@@ -411,8 +456,8 @@ def check_linux_image(device, kernel_dir):
             dev_found = True
             break
 
-    if not dev_found:
-        raise Exception("Unexpected bzImage: %s" % bzImage)
+    #if not dev_found:
+    #    raise Exception("Unexpected bzImage: %s" % bzImage)
 
 
 # Unique id for guest os

@@ -67,6 +67,7 @@ ADD_PACKAGE=$ADD_PACKAGE",usbutils"
 
 if [ -d $DIR ]; then
 	echo $DIR already exists.
+    ./build-image.sh $DIR $IMAGE_NAME.img
 	exit
 fi
 

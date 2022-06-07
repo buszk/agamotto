@@ -14,7 +14,7 @@
 # ARE EXPRESSLY DISCLAIMED.  The License provides additional details about
 # this warranty disclaimer.
 
-
+KCOV_INSTRUMENT=y
 mwifiex-y += main.o
 mwifiex-y += init.o
 mwifiex-y += cfp.o
