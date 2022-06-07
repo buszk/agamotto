@@ -48,6 +48,8 @@ sudo make install
 sudo reboot
 ```
 
+Confirm kernel version is 4.18 with `uname -r` after reboot.
+
 #### Tested environment:
 - [Ubuntu-hwe-4.18.0-18.19_18.04.1](https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/bionic) on AMD EPYC 7601
 
@@ -105,12 +107,7 @@ export PATH=$PATH:$AGPATH/build/qemu/install/bin/
 
 ### Setup VM
 
-- Patch and build Linux kernel
-  ```bash
-  cd $AGPATH/guest/linux/kernel
-  patch -p0 <../kernel.patch
-  ```
-
+- Build Linux kernel
   ```bash
   cd $AGPATH/scripts
   ./build-linux-guest.sh all ../guest/linux/kernel/
